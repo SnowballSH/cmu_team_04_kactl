@@ -12,10 +12,13 @@
 #pragma once
 
 vector<vi> treeJump(vi& P){
-	int on = 1, d = 1;
+	int on = 1, d = 1;  // d = ceil(log2(n))+1
 	while(on < sz(P)) on *= 2, d++;
+	// jmp[i][j] is the 2^i-th ancestor of node j
 	vector<vi> jmp(d, P);
 	rep(i,1,d) rep(j,0,sz(P))
+		// The 2^i-th ancestor is the 2^{i-1}-th of
+		// the 2^{i-1}-th ancestor
 		jmp[i][j] = jmp[i-1][jmp[i-1][j]];
 	return jmp;
 }
