@@ -1,19 +1,22 @@
 #!/usr/bin/env bash
 DIR=${1:-.}
+. "$DIR/doc/scripts/compiler.sh"
 
 # use a precompiled header for the template to improve perf
-g++-15 -Wall -Wfatal-errors -Wconversion -std=c++17 -O2 $DIR/stress-tests/utilities/template.h
+"$CXX" -Wall -Wfatal-errors -Wconversion -std=c++17 -O2 "$DIR/stress-tests/utilities/template.h" || exit $?
 trap "rm -f $DIR/stress-tests/utilities/template.h.gch" EXIT
 
-tests="$(find $DIR/stress-tests -name '*.cpp')"
+tests="$(find "$DIR/stress-tests" -name '*.cpp')"
 declare -i pass=0
 declare -i fail=0
 failTests=""
-ulimit -s 524288 # For 2-sat test
-for test in $tests; do
-    echo "$(basename $test): "
-    start=`date +%s.%N`
-    g++-15 -Wall -Wfatal-errors -Wconversion -std=c++17 -O2 $test && ./a.out
+# Request extra stack for recursive graph tests, within the platform limit.
+ulimit -s 524288 2>/dev/null || ulimit -s hard 2>/dev/null || true
+mkdir -p build
+while IFS= read -r test; do
+    echo "$(basename "$test"): "
+    start=$(date +%s)
+    "$CXX" -Wall -Wfatal-errors -Wconversion -std=c++17 -O2 "$test" -o build/stress-test && ./build/stress-test
     retCode=$?
     if (($retCode != 0)); then
         echo "Failed with $retCode"
@@ -22,12 +25,12 @@ for test in $tests; do
     else
         pass+=1
     fi
-    end=`date +%s.%N`
-    runtime=$( echo "$end - $start" | bc -l )
+    end=$(date +%s)
+    runtime=$((end - start))
     echo "Took $runtime seconds"
-    rm -f a.out
+    rm -f build/stress-test
     echo
-done
+done <<< "$tests"
 echo "$pass/$(($pass+$fail)) tests passed"
 if (($fail == 0)); then
     echo "No tests failed"

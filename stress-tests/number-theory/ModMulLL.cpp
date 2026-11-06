@@ -60,6 +60,14 @@ void testSq(ull lim, bool expectSuccess, bool useDoubles) {
 }
 
 int main() {
+	// Check the integer fallback without tests that expect floating-point failure.
+	if (LDBL_MANT_DIG != 64) {
+		test(7'200'000'000'000'000'000ULL, true, false);
+		testSq(7'200'000'000'000'000'000ULL, true, false);
+		cout << "Tests passed!" << endl;
+		return 0;
+	}
+
 	const ull limDoubles = 1ULL << 52;
 	test(limDoubles, true, true);
 	test((ull)(limDoubles * 1.02L), false, true);

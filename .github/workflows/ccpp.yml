@@ -7,18 +7,31 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-
+  linux:
     runs-on: ubuntu-latest
+    container: gcc:16
     timeout-minutes: 20
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Install pdflatex
-      run: sudo apt-get install texlive-latex-base texlive-latex-recommended texlive-latex-extra
-    - name: Build pdf
-      run: make kactl
-    - name: Run compiles
-      run: make test-compiles
-    - name: Run stress tests
-      run: make test
+      - uses: actions/checkout@v4
+      - name: Install build dependencies
+        run: apt-get update && apt-get install -y python3 texlive-latex-base texlive-latex-recommended texlive-latex-extra
+      - name: Build PDF
+        run: make kactl
+      - name: Compile headers
+        run: make test-compiles
+      - name: Run stress tests
+        run: make test
+
+  macos:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install GCC 16
+        run: brew install gcc
+      - name: Verify compiler
+        run: g++-16 --version
+      - name: Compile headers
+        run: make test-compiles
+      - name: Run stress tests
+        run: make test

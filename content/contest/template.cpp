@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
+#include <cassert>
 using namespace std;
 
-#define int int64_t
 #define rep(i, a, b) for (int i = a; i < (b); ++i)
 #define all(x) begin(x), end(x)
 #define sz(x) (int)(x).size()

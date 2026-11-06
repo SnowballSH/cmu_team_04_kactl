@@ -50,7 +50,10 @@ void dela(A& v, F f) {
 
 int main1() {
 	srand(2);
-	feenableexcept(29);
+#if defined(__GLIBC__)
+	// Floating-point traps are a glibc extension, not part of standard C++.
+	feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW);
+#endif
 	rep(it,0,3000000) {{
 		bumpalloc.reset();
 		// if (it % 200 == 0) cerr << endl;

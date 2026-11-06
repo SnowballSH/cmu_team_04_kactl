@@ -44,6 +44,7 @@ hashing ignores whitespace and comments.
 
 KACTL uses a relatively terse coding style, with a handful of macros/typedefs defined in the
 [template](./content/contest/template.cpp) that help shorten the code.
+The template uses standard `int`; use `ll` explicitly for 64-bit values.
 Line width is 63 chars, with tabs for indentation (tab = 2 spaces in the pdf).
 
 Each algorithm contains a header with the author of the code, the date it
@@ -59,6 +60,13 @@ KACTL aims for a high level of confidence in algorithm correctness.
 Testing is done both on online judges and (for newer algorithms) with stress tests
 that compare output to a more naive algorithm for a large amount of randomly generated cases.
 These tests live in the `stress-tests` directory, and are run with CI on every commit. The CI also verifies that all headers compile (except for an exclude list in `docs/scripts/skip_headers`) and that the latex compiles.
+
+Use GCC 16, Python 3, Bash, Make, and a LaTeX installation on Linux or macOS
+(or Windows through WSL). On macOS, install GCC with `brew install gcc`.
+The scripts prefer `g++-16` and `cpp-16`, falling back to unversioned GNU tools;
+`CXX` and `CPP` override compiler and preprocessor selection. Run
+`make test-compiles test kactl` to check headers, run stress tests, and build the PDF.
+The x86-only SIMD example is skipped when checking headers on other targets.
 
 `old-unit-tests` contains a couple of broken unit tests, last touched about ten years ago.
 

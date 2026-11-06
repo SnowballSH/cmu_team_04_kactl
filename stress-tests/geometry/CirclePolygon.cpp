@@ -8,14 +8,18 @@ typedef Point<long double> P;
 long double areaCT(P pa, P pb, long double r) {
 	if (pa.dist() < pb.dist()) swap(pa, pb);
 	if (sgn(pb.dist()) == 0) return 0;
-	long double a = pb.dist(), b = pa.dist(), c = (pb - pa).dist();
+	long double a = sqrt(pb.dist2()), b = sqrt(pa.dist2()), c = sqrt((pb-pa).dist2());
 	long double sinB = fabs(pb.cross(pb - pa) / a / c), cosB = pb.dot(pb - pa) / a / c,
 		sinC = fabs(pa.cross(pb) / a / b), cosC = pa.dot(pb) / a / b;
 	long double B = atan2(sinB, cosB), C = atan2(sinC, cosC);
 	if (a > r) {
 		long double S = C / 2 * r * r, h = a * b * sinC / c;
-		if (h < r && B < M_PI / 2)
-			S -= (acos(h / r) * r * r - h * sqrt(r * r - h * h));
+		if (h < r && B < M_PI / 2) {
+			// atan2 shares the same chord length with the segment term,
+			// avoiding cancellation from independently rounded acos/sqrt.
+			long double chord = sqrt(max(0.L, r * r - h * h));
+			S -= atan2(chord, h) * r * r - h * chord;
+		}
 		return S;
 	} else if (b > r) {
 		long double theta = M_PI - B - asin(sinB / r * a);

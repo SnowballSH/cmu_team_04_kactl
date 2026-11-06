@@ -10,13 +10,13 @@ template <class T>
 auto dijkstras(const vector<vector<pair<int, int>>> &g, int start = 0) {
   priority_queue<pair<T, int>, vector<pair<T, int>>, greater<pair<T, int>>> pq;
 
-  vector<T> dist(ssize(g), numeric_limits<T>::max());
-  vector<int> from(ssize(g), -1);
+  vector<T> dist(sz(g), numeric_limits<T>::max());
+  vector<int> from(sz(g), -1);
 
   dist[start] = 0;
   pq.emplace(0, start);
 
-  while (ssize(pq)) {
+  while (!pq.empty()) {
     auto [d, u] = pq.top();
     pq.pop();
     if (d != dist[u]) continue;

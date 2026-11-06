@@ -2,7 +2,6 @@
 
 #include "../../content/strings/Hashing.h"
 
-#include <sys/time.h>
 int main() {
 	assert((H(1)*2+1-3).get() == 0);
 

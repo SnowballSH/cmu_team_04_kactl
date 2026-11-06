@@ -1,7 +1,9 @@
+#!/usr/bin/env bash
+. "$(dirname "$0")/compiler.sh"
 mkdir -p build
 FILE="$1"
-echo "
-#include \"../content/contest/template.cpp\"
-#include \"../$FILE\"
-" >build/temp.cpp
-g++-15 -Wall -Wextra -Wfatal-errors -Wconversion -std=c++17 build/temp.cpp && rm a.out build/temp.cpp
+cat >build/temp.cpp <<EOF
+#include "../content/contest/template.cpp"
+#include "../$FILE"
+EOF
+"$CXX" -Wall -Wextra -Wfatal-errors -Wconversion -std=c++17 build/temp.cpp -o build/header-check && rm build/header-check build/temp.cpp

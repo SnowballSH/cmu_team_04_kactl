@@ -68,7 +68,19 @@ int main() {
 		ll c = (ll)rand() << 2;
 		ll k = (ll)rand() << 2;
 		ll m = (ll)rand() >> 2;
-		assert(abs(modsum(t, c, k, m) / ((long double)m/2 * t) - 1)<1e-5);
+		// Exact independent floor-sum oracle; libc rand sequences differ.
+		__uint128_t n = t, a = k, b = c, mod = m, floors = 0;
+		while (true) {
+			floors += n * (n - 1) / 2 * (a / mod) + n * (b / mod);
+			a %= mod; b %= mod;
+			__uint128_t y = a * n + b;
+			if (y < mod) break;
+			n = y / mod; b = y % mod;
+			swap(mod, a);
+		}
+		__uint128_t expected = (__uint128_t)t * c
+			+ (__uint128_t)k * t * (t - 1) / 2 - floors * m;
+		assert((__uint128_t)modsum(t, c, k, m) == expected);
 	}
 	cout<<"Tests passed!"<<endl;
 	return 0;

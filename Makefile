@@ -46,6 +46,5 @@ test-session.pdf: content/test-session/test-session.tex content/test-session/cha
 	$(LATEXCMD) content/test-session/test-session.tex
 	cp build/test-session.pdf test-session.pdf
 
-showexcluded: build
-	grep -RoPh '^\s*\\kactlimport{\K.*' content/ | sed 's/.$$//' > build/headers_included
-	find ./content -name "*.h" -o -name "*.py" -o -name "*.java" | grep -vFf build/headers_included
+showexcluded:
+	python3 doc/scripts/show-excluded.py

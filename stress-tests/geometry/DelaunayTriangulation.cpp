@@ -9,7 +9,10 @@
 
 typedef Point<double> P;
 int main() {
-	feenableexcept(29);
+#if defined(__GLIBC__)
+	// Floating-point traps are a glibc extension, not part of standard C++.
+	feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW);
+#endif
 	rep(it,0,100000) {{
 		vector<P> ps;
 		int N = rand() % 20 + 1;

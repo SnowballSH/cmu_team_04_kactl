@@ -1,5 +1,5 @@
 #include "../utilities/template.h"
-#include <unistd.h>
+#include <filesystem>
 
 // Same as FastInput.h but within a struct, to be able to reset bc/be from outside.
 struct GC {
@@ -53,8 +53,10 @@ void test(const string& s, vi ints = {}) {
 
 int main() {
 	// Unit test, not stress test, but oh well.
-	char pattern[] = "/tmp/fastinputXXXXXX";
-	tempdirname = mkdtemp(pattern);
+	auto dir = filesystem::temp_directory_path() /
+		("kactl-fastinput-" + to_string(chrono::steady_clock::now().time_since_epoch().count()));
+	assert(filesystem::create_directory(dir));
+	tempdirname = dir.string();
 	tempfilename = tempdirname + "/stdin.txt";
 
 	// First test that the getchar implementation is correct:
@@ -84,7 +86,7 @@ int main() {
 	test("  -34   56   ", {-34, 56});
 	test(" \t\r\n5 -2 ", {5});
 
-	unlink(tempfilename.c_str());
-	rmdir(tempdirname.c_str());
+	fclose(stdin);
+	filesystem::remove_all(tempdirname);
 	cout << "Tests passed!" << endl;
 }

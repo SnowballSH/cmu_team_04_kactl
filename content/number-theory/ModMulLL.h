@@ -11,15 +11,19 @@
  * A proof of correctness is in doc/modmul-proof.tex. An earlier version of the proof,
  * from when the code used a * b / (long double)M, is in doc/modmul-proof.md.
  * The proof assumes that long doubles are implemented as x87 80-bit floats; if they
- * are 64-bit, as on e.g. MSVC, the implementation is only valid for
- * $0 \le a, b \le c < 2^{52} \approx 4.5 \cdot 10^{15}$.
+ * have another format, use exact 128-bit integer arithmetic instead.
  */
 #pragma once
+#include <cfloat>
 
 typedef unsigned long long ull;
 ull modmul(ull a, ull b, ull M) {
+#if LDBL_MANT_DIG == 64
 	ll ret = a * b - M * ull(1.L / M * a * b);
 	return ret + M * (ret < 0) - M * (ret >= (ll)M);
+#else
+	return (ull)((__uint128_t)a * b % M);
+#endif
 }
 ull modpow(ull b, ull e, ull mod) {
 	ull ans = 1;

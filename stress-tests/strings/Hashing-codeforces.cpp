@@ -7,11 +7,8 @@
 #pragma GCC diagnostic pop
 #undef main
 
-#include <sys/time.h>
 int main() {
-	timeval tp;
-	gettimeofday(&tp, 0);
-	C = (int)tp.tv_usec;
+	C = 123457; // Deterministic nontrivial hash base.
 	assert((ull)(H(1)*2+1-3) == 0);
 
 	rep(it,0,10000) {
