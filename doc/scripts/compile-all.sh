@@ -3,7 +3,7 @@ DIR=${1:-.}
 . "$DIR/doc/scripts/compiler.sh"
 
 # use a precompiled header for the template to improve perf
-"$CXX" -Wall -Wextra -Wfatal-errors -Wconversion -std=c++17 -x c++-header "$DIR/content/contest/template.cpp" || exit $?
+"$CXX" -Wall -Wextra -Wfatal-errors -Wconversion -std=c++20 -x c++-header "$DIR/content/contest/template.cpp" || exit $?
 trap "rm -f $DIR/content/contest/template.cpp.gch" EXIT
 
 SCRIPT_DIR=$DIR/doc/scripts

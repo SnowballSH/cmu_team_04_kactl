@@ -1,7 +1,12 @@
 /**
  * Author: Oi-Wiki
  * Date: Unknown
- * Description: Big Integer
+ * Description: Signed arbitrary-precision integer in base $10^4$. Construct
+ * from int or a decimal string (optional leading sign). / and \% truncate
+ * toward zero like C++; dividing by zero asserts.
+ * Usage: BigIntTiny a("-123456789012345"), b(42); cout << (a*b).to_str();
+ * Time: $+,-$ O(n), $*,/,\%$ O(n^2) for n digits.
+ * Status: tested against Python on random inputs
  */
 #pragma once
 
@@ -9,12 +14,10 @@ struct BigIntTiny {
     int sign;
     vector<int> v;
 
-    BigIntTiny() : sign(1) {}
+    BigIntTiny() : sign(1), v{0} {}
     BigIntTiny(const string &s) { *this = s; }
     BigIntTiny(int v) {
-        char buf[21];
-        sprintf(buf, "%d", v);
-        *this = buf;
+        *this = to_string(v);
     }
     void zip(int unzip) {
         if (unzip == 0) {
@@ -27,6 +30,7 @@ struct BigIntTiny {
     }
     int get_pos(unsigned pos) const { return pos >= v.size() ? 0 : v[pos]; }
     BigIntTiny &setsign(int newsign, int rev) {
+        if (v.empty()) v.push_back(0);
         for (int i = (int)v.size() - 1; i > 0 && v[i] == 0; i--)
             v.erase(v.begin() + i);
         sign = (v.size() == 0 || (v.size() == 1 && v[0] == 0)) ? 1 : (rev ? newsign * sign : newsign);
@@ -51,6 +55,7 @@ struct BigIntTiny {
         return c;
     }
     BigIntTiny &operator=(const string &s) {
+        if (s[0] == '+') return *this = s.substr(1);
         if (s[0] == '-')
             *this = s.substr(1);
         else {
@@ -85,10 +90,11 @@ struct BigIntTiny {
         }
     }
     BigIntTiny operator-(const BigIntTiny &b) const {
-        if (b.v.empty() || b.v.size() == 1 && b.v[0] == 0) return *this;
+        if (b.v.empty() || (b.v.size() == 1 && b.v[0] == 0)) return *this;
         if (sign != b.sign) return (*this) + -b;
         if (absless(b)) return -(b - *this);
         BigIntTiny c;
+        c.v.clear();
         for (int i = 0, borrow = 0; i < (int)v.size(); i++) {
             borrow += v[i] - b.get_pos(i);
             c.v.push_back(borrow);
@@ -104,7 +110,9 @@ struct BigIntTiny {
         return c.setsign(sign * b.sign, 0);
     }
     BigIntTiny operator/(const BigIntTiny &b) const {
+        assert(b.v.size() > 1 || b.v[0]);
         BigIntTiny c, d;
+        c.v.clear();
         BigIntTiny e=b;
         e.sign=1;
 

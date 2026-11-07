@@ -3,7 +3,7 @@ DIR=${1:-.}
 . "$DIR/doc/scripts/compiler.sh"
 
 # use a precompiled header for the template to improve perf
-"$CXX" -Wall -Wfatal-errors -Wconversion -std=c++17 -O2 "$DIR/stress-tests/utilities/template.h" || exit $?
+"$CXX" -Wall -Wfatal-errors -Wconversion -std=c++20 -O2 "$DIR/stress-tests/utilities/template.h" || exit $?
 trap "rm -f $DIR/stress-tests/utilities/template.h.gch" EXIT
 
 tests="$(find "$DIR/stress-tests" -name '*.cpp')"
@@ -16,7 +16,7 @@ mkdir -p build
 while IFS= read -r test; do
     echo "$(basename "$test"): "
     start=$(date +%s)
-    "$CXX" -Wall -Wfatal-errors -Wconversion -std=c++17 -O2 "$test" -o build/stress-test && ./build/stress-test
+    "$CXX" -Wall -Wfatal-errors -Wconversion -std=c++20 -O2 "$test" -o build/stress-test && ./build/stress-test
     retCode=$?
     if (($retCode != 0)); then
         echo "Failed with $retCode"

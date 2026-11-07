@@ -6,4 +6,4 @@ cat >build/temp.cpp <<EOF
 #include "../content/contest/template.cpp"
 #include "../$FILE"
 EOF
-"$CXX" -Wall -Wextra -Wfatal-errors -Wconversion -std=c++17 build/temp.cpp -o build/header-check && rm build/header-check build/temp.cpp
+"$CXX" -Wall -Wextra -Wfatal-errors -Wconversion -std=c++20 build/temp.cpp -o build/header-check && rm build/header-check build/temp.cpp

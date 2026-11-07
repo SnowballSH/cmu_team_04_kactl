@@ -24,12 +24,12 @@ typedef Point<ll> P;
 vector<P> convexHull(vector<P> pts) {
 	if (sz(pts) <= 1) return pts;
 	sort(all(pts));
-	// change to sz(pts)*2 + 1 if include all points on edge
+	// to keep points on edges: unique pts first, use sz(pts)*2+1
 	vector<P> h(sz(pts)+1);
 	int s = 0, t = 0;
 	for (int it = 2; it--; s = --t, reverse(all(pts)))
 		for (P p : pts) {
-			// change <= 0 to < 0 if include all points on edge
+			// and < 0 (all collinear: returns line there and back)
 			while (t >= s + 2 && h[t-2].cross(h[t-1], p) <= 0) t--;
 			h[t++] = p;
 		}
