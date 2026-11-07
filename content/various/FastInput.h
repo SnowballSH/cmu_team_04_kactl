@@ -3,7 +3,7 @@
  * License: CC0
  * Source: Own work
  * Description: Read an integer from stdin. Usage requires your program to pipe in
- * input from file.
+ * input from file. Do not read past the last integer (loops forever at EOF).
  * Usage: ./a.out < input.txt
  * Time: About 5x as fast as cin/scanf.
  * Status: tested on SPOJ INTEST, unit tested

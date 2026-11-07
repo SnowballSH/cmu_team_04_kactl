@@ -11,7 +11,8 @@
  * The \texttt{lcp} array contains longest common prefixes for
  * neighbouring strings in the suffix array:
  * \texttt{lcp[i] = lcp(sa[i], sa[i-1])}, \texttt{lcp[0] = 0}.
- * The input string must not contain any nul chars.
+ * The input string must not contain any nul chars. Chars are read as signed,
+ * so cast to unsigned char first if any are $\ge 128$.
  * Time: O(n \log n)
  * Status: stress-tested
  */

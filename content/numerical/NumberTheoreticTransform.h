@@ -6,11 +6,11 @@
  * Description: ntt(a) computes $\hat f(k) = \sum_x a[x] g^{xk}$ for all $k$, where $g=\text{root}^{(mod-1)/N}$.
  * N must be a power of 2.
  * Useful for convolution modulo specific nice primes of the form $2^a b+1$,
- * where the convolution result has size at most $2^a$. For arbitrary modulo, see FFTMod.
+ * where the convolution result has size less than $2^a$. For arbitrary modulo, see FFTMod.
    \texttt{conv(a, b) = c}, where $c[x] = \sum a[i]b[x-i]$.
    For manual convolution: NTT the inputs, multiply
    pointwise, divide by n, reverse(start+1, end), NTT back.
- * Inputs must be in [0, mod).
+ * Inputs must be in [0, mod). Replace the mod in ModPow.h with the one below.
  * Time: O(N \log N)
  * Status: stress-tested
  */

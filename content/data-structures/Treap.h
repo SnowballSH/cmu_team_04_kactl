@@ -56,7 +56,7 @@ Node* ins(Node* t, Node* n, int pos) {
 	return merge(merge(l, n), r);
 }
 
-// Example application: move the range [l, r) to index k
+// Example: move [l,r) to before index k (k<=l or k>=r)
 void move(Node*& t, int l, int r, int k) {
 	Node *a, *b, *c;
 	tie(a,b) = split(t, l); tie(b,c) = split(b, r - l);

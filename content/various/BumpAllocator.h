@@ -10,10 +10,10 @@
 #pragma once
 
 // Either globally or in a single class:
-static char buf[450 << 20];
+alignas(16) static char buf[450 << 20];
 void* operator new(size_t s) {
 	static size_t i = sizeof buf;
 	assert(s < i);
-	return (void*)&buf[i -= s];
+	return (void*)&buf[i = (i - s) & ~size_t(7)];
 }
 void operator delete(void*) {}

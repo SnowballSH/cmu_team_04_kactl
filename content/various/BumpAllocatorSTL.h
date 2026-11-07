@@ -9,7 +9,7 @@
  */
 #pragma once
 
-char buf[450 << 20] alignas(16);
+alignas(16) char buf[450 << 20];
 size_t buf_ind = sizeof buf;
 
 template<class T> struct small {

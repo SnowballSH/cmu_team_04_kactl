@@ -6,9 +6,9 @@
  * Description: Cheat sheet of SSE/AVX intrinsics, for doing arithmetic on several numbers at once.
  * Can provide a constant factor improvement of about 4, orthogonal to loop unrolling.
  * Operations follow the pattern \texttt{"\_mm(256)?\_name\_(si(128|256)|epi(8|16|32|64)|pd|ps)"}. Not all are described here;
- * grep for \texttt{\_mm\_} in \texttt{/usr/lib/gcc/{*}/4.9/include/} for more.
+ * grep for \texttt{\_mm\_} in \texttt{/usr/lib/gcc/{*}/{*}/include/} for more.
  * If AVX is unsupported, try 128-bit operations, "emmintrin.h" and \#define \texttt{\_\_SSE\_\_} and \texttt{\_\_MMX\_\_} before including it.
- * For aligned memory use \texttt{\_mm\_malloc(size, 32)} or \texttt{int buf[N] alignas(32)}, but prefer loadu/storeu.
+ * For aligned memory use \texttt{\_mm\_malloc(size, 32)} or \texttt{alignas(32) int buf[N]}, but prefer loadu/storeu.
  */
 #pragma once
 
@@ -31,7 +31,7 @@ typedef __m256i mi;
 // shuffle_epi8(x, y) takes a vector instead of an imm
 
 // Methods that work with most data types (append e.g. _epi32):
-// set1, blend (i8?x:y), add, adds (sat.), mullo, sub, and/or,
+// set1, blend (i8?y:x), add, adds (sat.), mullo, sub, and/or,
 // andnot, abs, min, max, sign(1,x), cmp(gt|eq), unpack(lo|hi)
 
 int sumi32(mi m) { union {int v[8]; mi m;} u; u.m = m;
@@ -47,9 +47,9 @@ ll example_filteredDotProduct(int n, short* a, short* b) {
 	while (i + 16 <= n) {
 		mi va = L(a[i]), vb = L(b[i]); i += 16;
 		va = _mm256_and_si256(_mm256_cmpgt_epi16(vb, va), va);
-		mi vp = _mm256_madd_epi16(va, vb);
-		acc = _mm256_add_epi64(_mm256_unpacklo_epi32(vp, zero),
-			_mm256_add_epi64(acc, _mm256_unpackhi_epi32(vp, zero)));
+		mi vp = _mm256_madd_epi16(va, vb), sg = _mm256_srai_epi32(vp, 31);
+		acc = _mm256_add_epi64(_mm256_unpacklo_epi32(vp, sg),
+			_mm256_add_epi64(acc, _mm256_unpackhi_epi32(vp, sg)));
 	}
 	union {ll v[4]; mi m;} u; u.m = acc; rep(i,0,4) r += u.v[i];
 	for (;i<n;++i) if (a[i] < b[i]) r += a[i]*b[i]; // <- equiv
